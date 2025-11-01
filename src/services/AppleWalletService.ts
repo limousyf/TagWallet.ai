@@ -108,15 +108,20 @@ export class AppleWalletService {
       // Create pass.json buffer from our model
       const passJsonBuffer = Buffer.from(JSON.stringify(model));
 
+      // Load certificates
+      const wwdrBuffer = await this.getCertificate('wwdr.pem');
+      const signerCertBuffer = await this.getCertificate('signerCert.pem');
+      const signerKeyBuffer = await this.getCertificate('signerKey.key');
+
       // Create pass using PKPass constructor with inline buffers
       const pass = new PKPass(
         {
           "pass.json": passJsonBuffer,
         },
         {
-          wwdr: await this.getCertificate('wwdr.pem'),
-          signerCert: await this.getCertificate('signerCert.pem'),
-          signerKey: await this.getCertificate('signerKey.pem'),
+          wwdr: wwdrBuffer,
+          signerCert: signerCertBuffer,
+          signerKey: signerKeyBuffer,
           signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
         }
       );
