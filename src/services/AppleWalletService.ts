@@ -108,10 +108,37 @@ export class AppleWalletService {
       // Create pass.json buffer from our model
       const passJsonBuffer = Buffer.from(JSON.stringify(model));
 
-      // Load certificates
-      const wwdrBuffer = await this.getCertificate('wwdr.pem');
-      const signerCertBuffer = await this.getCertificate('signerCert.pem');
-      const signerKeyBuffer = await this.getCertificate('signerKey.key');
+      // Load certificates with individual error handling
+      let wwdrBuffer, signerCertBuffer, signerKeyBuffer;
+
+      try {
+        console.log('Loading wwdr.pem...');
+        wwdrBuffer = await this.getCertificate('wwdr.pem');
+        console.log('wwdr.pem loaded successfully, size:', wwdrBuffer.length);
+      } catch (error) {
+        console.error('Error loading wwdr.pem:', error);
+        throw error;
+      }
+
+      try {
+        console.log('Loading signerCert.pem...');
+        signerCertBuffer = await this.getCertificate('signerCert.pem');
+        console.log('signerCert.pem loaded successfully, size:', signerCertBuffer.length);
+      } catch (error) {
+        console.error('Error loading signerCert.pem:', error);
+        throw error;
+      }
+
+      try {
+        console.log('Loading signerKey.key...');
+        signerKeyBuffer = await this.getCertificate('signerKey.key');
+        console.log('signerKey.key loaded successfully, size:', signerKeyBuffer.length);
+      } catch (error) {
+        console.error('Error loading signerKey.key:', error);
+        throw error;
+      }
+
+      console.log('All certificates loaded, creating PKPass...');
 
       // Create pass using PKPass constructor with inline buffers
       const pass = new PKPass(
