@@ -20,6 +20,17 @@ export class AppleWalletService {
   async generatePass(passData: PassTemplateData, serialNumber: string): Promise<Buffer> {
     try {
       const passModel = {
+        model: {
+          formatVersion: 1,
+          passTypeIdentifier: config.appleWallet.passTypeId,
+          teamIdentifier: config.appleWallet.teamId,
+          organizationName: passData.organizationName,
+          description: passData.description,
+          logoText: passData.logoText,
+          foregroundColor: passData.foregroundColor,
+          backgroundColor: passData.backgroundColor,
+          labelColor: passData.labelColor || passData.foregroundColor,
+        },
         certificates: {
           wwdr: await this.getCertificate('wwdr.pem'),
           signerCert: await this.getCertificate('signerCert.pem'),
@@ -27,15 +38,7 @@ export class AppleWalletService {
           signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
         },
         overrides: {
-          passTypeIdentifier: config.appleWallet.passTypeId,
-          teamIdentifier: config.appleWallet.teamId,
           serialNumber: serialNumber,
-          organizationName: passData.organizationName,
-          description: passData.description,
-          logoText: passData.logoText,
-          foregroundColor: passData.foregroundColor,
-          backgroundColor: passData.backgroundColor,
-          labelColor: passData.labelColor || passData.foregroundColor,
           webServiceURL: passData.webServiceURL,
           authenticationToken: passData.authenticationToken,
         },
