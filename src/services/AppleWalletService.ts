@@ -108,7 +108,7 @@ export class AppleWalletService {
       const pass = new PKPass(passTemplate as any, {
         wwdr: await this.getCertificate('wwdr.pem'),
         signerCert: await this.getCertificate('signerCert.pem'),
-        signerKey: await this.getCertificate('signerKey.pem'),
+        signerKey: await this.getCertificate('signerKey.key'),
         signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
       });
       return pass.getAsBuffer();
