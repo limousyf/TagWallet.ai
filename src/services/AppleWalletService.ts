@@ -116,7 +116,7 @@ export class AppleWalletService {
         {
           wwdr: await this.getCertificate('wwdr.pem'),
           signerCert: await this.getCertificate('signerCert.pem'),
-          signerKey: await this.getCertificate('signerKey.key'),
+          signerKey: await this.getCertificate('signerKey.pem'),
           signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
         }
       );
