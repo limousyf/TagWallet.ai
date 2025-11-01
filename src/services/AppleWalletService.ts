@@ -105,13 +105,16 @@ export class AppleWalletService {
         };
       }
 
-      const pass = await PKPass.from(
-        model as any,
+      // Create pass using constructor with inline template
+      const pass = new PKPass(
         {
-          wwdr: await this.getCertificate('wwdr.pem'),
-          signerCert: await this.getCertificate('signerCert.pem'),
-          signerKey: await this.getCertificate('signerKey.key'),
-          signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
+          model: JSON.stringify(model),
+          certificates: {
+            wwdr: await this.getCertificate('wwdr.pem'),
+            signerCert: await this.getCertificate('signerCert.pem'),
+            signerKey: await this.getCertificate('signerKey.key'),
+            signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
+          }
         } as any
       );
       return pass.getAsBuffer();
