@@ -59,14 +59,14 @@ export class PassController {
       let qrCodeUrl: string;
 
       if (walletType === 'apple') {
-        const result = await this.getAppleWalletService().createPassWithQR(
+        const result = await PassController.getAppleWalletService().createPassWithQR(
           passData,
           generatedPass.serialNumber
         );
         downloadUrl = result.passUrl;
         qrCodeUrl = result.qrCodeUrl;
       } else {
-        const result = await this.getGoogleWalletService().createPassWithQR(
+        const result = await PassController.getGoogleWalletService().createPassWithQR(
           passData,
           generatedPass.serialNumber
         );
