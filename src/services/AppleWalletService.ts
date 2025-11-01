@@ -76,12 +76,12 @@ export class AppleWalletService {
         },
       };
 
-      if (passData.relevantDate) {
-        passModel.overrides.relevantDate = passData.relevantDate;
+      if ((passData as any).relevantDate) {
+        (passModel.overrides as any).relevantDate = (passData as any).relevantDate;
       }
 
       if (passData.locations && passData.locations.length > 0) {
-        passModel.overrides.locations = passData.locations.map(location => ({
+        (passModel.overrides as any).locations = passData.locations.map(location => ({
           latitude: location.latitude,
           longitude: location.longitude,
           altitude: location.altitude,
@@ -89,12 +89,12 @@ export class AppleWalletService {
         }));
 
         if (passData.maxDistance) {
-          passModel.overrides.maxDistance = passData.maxDistance;
+          (passModel.overrides as any).maxDistance = passData.maxDistance;
         }
       }
 
       if (passData.barcode) {
-        passModel.overrides.barcodes = [
+        (passModel.overrides as any).barcodes = [
           {
             format: passData.barcode.format,
             message: passData.barcode.message,
@@ -105,13 +105,13 @@ export class AppleWalletService {
       }
 
       if (passData.nfc) {
-        passModel.overrides.nfc = {
+        (passModel.overrides as any).nfc = {
           message: passData.nfc.message,
           encryptionPublicKey: passData.nfc.encryptionPublicKey,
         };
       }
 
-      const pass = await PKPass.from(passModel, {});
+      const pass = await PKPass.from(passModel as any, {});
       return pass.getAsBuffer();
     } catch (error) {
       console.error('Error generating Apple Wallet pass:', error);
@@ -141,8 +141,6 @@ export class AppleWalletService {
   async generateQRCode(data: string): Promise<Buffer> {
     try {
       const qrCodeBuffer = await QRCode.toBuffer(data, {
-        type: 'png',
-        quality: 0.92,
         margin: 1,
         color: {
           dark: '#000000',

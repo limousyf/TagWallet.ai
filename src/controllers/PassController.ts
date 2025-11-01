@@ -6,8 +6,22 @@ import { GoogleWalletService } from '../services/GoogleWalletService';
 import { CreatePassRequest } from '../types';
 
 export class PassController {
-  private static appleWalletService = new AppleWalletService();
-  private static googleWalletService = new GoogleWalletService();
+  private static appleWalletService: AppleWalletService | null = null;
+  private static googleWalletService: GoogleWalletService | null = null;
+
+  private static getAppleWalletService(): AppleWalletService {
+    if (!this.appleWalletService) {
+      this.appleWalletService = new AppleWalletService();
+    }
+    return this.appleWalletService;
+  }
+
+  private static getGoogleWalletService(): GoogleWalletService {
+    if (!this.googleWalletService) {
+      this.googleWalletService = new GoogleWalletService();
+    }
+    return this.googleWalletService;
+  }
 
   static async createPass(
     request: FastifyRequest<{ Body: CreatePassRequest }>,
@@ -45,14 +59,14 @@ export class PassController {
       let qrCodeUrl: string;
 
       if (walletType === 'apple') {
-        const result = await this.appleWalletService.createPassWithQR(
+        const result = await this.getAppleWalletService().createPassWithQR(
           passData,
           generatedPass.serialNumber
         );
         downloadUrl = result.passUrl;
         qrCodeUrl = result.qrCodeUrl;
       } else {
-        const result = await this.googleWalletService.createPassWithQR(
+        const result = await this.getGoogleWalletService().createPassWithQR(
           passData,
           generatedPass.serialNumber
         );
@@ -78,7 +92,7 @@ export class PassController {
         },
       });
     } catch (error) {
-      request.log.error('Error in createPass:', error);
+      request.log.error(`'Error in createPass:' ${error}`);
       reply.status(500).send({
         error: 'Failed to create pass',
         details: error.message,
@@ -123,7 +137,7 @@ export class PassController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getUserPasses:', error);
+      request.log.error(`'Error in getUserPasses:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -151,7 +165,7 @@ export class PassController {
 
       reply.send({ pass });
     } catch (error) {
-      request.log.error('Error in getPass:', error);
+      request.log.error(`'Error in getPass:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -183,7 +197,7 @@ export class PassController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getPassBySerial:', error);
+      request.log.error(`'Error in getPassBySerial:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -221,7 +235,7 @@ export class PassController {
 
       reply.send({ message: 'Pass deleted successfully' });
     } catch (error) {
-      request.log.error('Error in deletePass:', error);
+      request.log.error(`'Error in deletePass:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -240,7 +254,7 @@ export class PassController {
 
       reply.send({ stats });
     } catch (error) {
-      request.log.error('Error in getPassStats:', error);
+      request.log.error(`'Error in getPassStats:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }

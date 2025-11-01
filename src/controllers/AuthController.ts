@@ -1,5 +1,4 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import jwt from 'jsonwebtoken';
 import { UserModel } from '../models/User';
 import { config } from '../config';
 import { RegisterRequest, LoginRequest, AuthToken } from '../types';
@@ -31,9 +30,7 @@ export class AuthController {
         isAdmin: user.isAdmin,
       };
 
-      const token = jwt.sign(tokenPayload, config.jwt.secret, {
-        expiresIn: config.jwt.expiresIn,
-      });
+      const token = request.server.jwt.sign(tokenPayload);
 
       reply.status(201).send({
         message: 'User registered successfully',
@@ -47,7 +44,7 @@ export class AuthController {
         token,
       });
     } catch (error) {
-      request.log.error('Error in register:', error);
+      request.log.error(`'Error in register:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -77,9 +74,7 @@ export class AuthController {
         isAdmin: user.isAdmin,
       };
 
-      const token = jwt.sign(tokenPayload, config.jwt.secret, {
-        expiresIn: config.jwt.expiresIn,
-      });
+      const token = request.server.jwt.sign(tokenPayload);
 
       reply.send({
         message: 'Login successful',
@@ -93,7 +88,7 @@ export class AuthController {
         token,
       });
     } catch (error) {
-      request.log.error('Error in login:', error);
+      request.log.error(`'Error in login:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -123,7 +118,7 @@ export class AuthController {
         },
       });
     } catch (error) {
-      request.log.error('Error in me:', error);
+      request.log.error(`'Error in me:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -147,16 +142,14 @@ export class AuthController {
         isAdmin: user.isAdmin,
       };
 
-      const token = jwt.sign(tokenPayload, config.jwt.secret, {
-        expiresIn: config.jwt.expiresIn,
-      });
+      const token = request.server.jwt.sign(tokenPayload);
 
       reply.send({
         message: 'Token refreshed successfully',
         token,
       });
     } catch (error) {
-      request.log.error('Error in refreshToken:', error);
+      request.log.error(`'Error in refreshToken:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }

@@ -1,13 +1,5 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import jwt from 'jsonwebtoken';
-import { config } from '../config';
 import { AuthToken } from '../types';
-
-declare module 'fastify' {
-  export interface FastifyRequest {
-    user?: AuthToken;
-  }
-}
 
 export const authenticateToken = async (
   request: FastifyRequest,
@@ -22,7 +14,7 @@ export const authenticateToken = async (
       return;
     }
 
-    const decoded = jwt.verify(token, config.jwt.secret) as AuthToken;
+    const decoded = await request.server.jwt.verify(token) as AuthToken;
     request.user = decoded;
   } catch (error) {
     reply.status(403).send({ error: 'Invalid or expired token' });

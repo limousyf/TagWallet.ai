@@ -34,7 +34,7 @@ export class AdminController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getUsers:', error);
+      request.log.error(`'Error in getUsers:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -61,7 +61,7 @@ export class AdminController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getAllTemplates:', error);
+      request.log.error(`'Error in getAllTemplates:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -93,7 +93,7 @@ export class AdminController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getAllPasses:', error);
+      request.log.error(`'Error in getAllPasses:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -117,7 +117,7 @@ export class AdminController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getGlobalStats:', error);
+      request.log.error(`'Error in getGlobalStats:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -140,7 +140,7 @@ export class AdminController {
 
       reply.send({ message: 'User deleted successfully' });
     } catch (error) {
-      request.log.error('Error in deleteUser:', error);
+      request.log.error(`'Error in deleteUser:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -158,7 +158,7 @@ export class AdminController {
 
       reply.send({ message: 'Template deleted successfully' });
     } catch (error) {
-      request.log.error('Error in deleteTemplate:', error);
+      request.log.error(`'Error in deleteTemplate:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -176,7 +176,7 @@ export class AdminController {
 
       reply.send({ message: 'Pass deleted successfully' });
     } catch (error) {
-      request.log.error('Error in deletePass:', error);
+      request.log.error(`'Error in deletePass:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }

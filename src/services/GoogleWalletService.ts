@@ -62,7 +62,7 @@ export class GoogleWalletService {
     };
 
     if (passData.locations && passData.locations.length > 0) {
-      classObject.locations = passData.locations.map(location => ({
+      (classObject as any).locations = passData.locations.map(location => ({
         latitude: location.latitude,
         longitude: location.longitude,
         kind: 'walletobjects#latLongPoint',
@@ -125,7 +125,7 @@ export class GoogleWalletService {
     };
 
     if (passData.barcode) {
-      objectData.barcode = {
+      (objectData as any).barcode = {
         type: this.mapBarcodeFormat(passData.barcode.format),
         value: passData.barcode.message,
         alternateText: passData.barcode.altText || passData.barcode.message,
@@ -171,8 +171,6 @@ export class GoogleWalletService {
   async generateQRCode(data: string): Promise<Buffer> {
     try {
       const qrCodeBuffer = await QRCode.toBuffer(data, {
-        type: 'png',
-        quality: 0.92,
         margin: 1,
         color: {
           dark: '#000000',

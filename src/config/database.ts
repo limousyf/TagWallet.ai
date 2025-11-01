@@ -14,16 +14,18 @@ const dbConfig: PoolConfig = {
   connectionTimeoutMillis: 2000,
 };
 
+let pool: Pool;
+
 if (process.env.DATABASE_URL) {
-  const pool = new Pool({
+  pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   });
-  export default pool;
 } else {
-  const pool = new Pool(dbConfig);
-  export default pool;
+  pool = new Pool(dbConfig);
 }
+
+export default pool;
 
 export const initializeDatabase = async (): Promise<void> => {
   const client = await pool.connect();
@@ -81,12 +83,23 @@ export const initializeDatabase = async (): Promise<void> => {
       END;
       $$ language 'plpgsql';
 
-      CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
-        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-      CREATE TRIGGER update_pass_templates_updated_at BEFORE UPDATE ON pass_templates
-        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-      CREATE TRIGGER update_generated_passes_updated_at BEFORE UPDATE ON generated_passes
-        FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+      DO $$
+      BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_users_updated_at') THEN
+          CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
+            FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+        END IF;
+
+        IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_pass_templates_updated_at') THEN
+          CREATE TRIGGER update_pass_templates_updated_at BEFORE UPDATE ON pass_templates
+            FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+        END IF;
+
+        IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_generated_passes_updated_at') THEN
+          CREATE TRIGGER update_generated_passes_updated_at BEFORE UPDATE ON generated_passes
+            FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+        END IF;
+      END $$;
     `);
 
     console.log('Database initialized successfully');
@@ -97,5 +110,3 @@ export const initializeDatabase = async (): Promise<void> => {
     client.release();
   }
 };
-
-const pool = new Pool(dbConfig);

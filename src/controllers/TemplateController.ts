@@ -20,7 +20,7 @@ export class TemplateController {
         template,
       });
     } catch (error) {
-      request.log.error('Error in createTemplate:', error);
+      request.log.error(`'Error in createTemplate:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -56,7 +56,7 @@ export class TemplateController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getUserTemplates:', error);
+      request.log.error(`'Error in getUserTemplates:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -84,7 +84,7 @@ export class TemplateController {
 
       reply.send({ template });
     } catch (error) {
-      request.log.error('Error in getTemplate:', error);
+      request.log.error(`'Error in getTemplate:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -129,7 +129,7 @@ export class TemplateController {
         template: updatedTemplate,
       });
     } catch (error) {
-      request.log.error('Error in updateTemplate:', error);
+      request.log.error(`'Error in updateTemplate:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -167,7 +167,7 @@ export class TemplateController {
 
       reply.send({ message: 'Template deleted successfully' });
     } catch (error) {
-      request.log.error('Error in deleteTemplate:', error);
+      request.log.error(`'Error in deleteTemplate:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }

@@ -37,25 +37,26 @@ const createApp = async (): Promise<FastifyInstance> => {
     prefix: '/',
   });
 
-  app.get('/health', async (request, reply) => {
+  app.get('/health', async () => {
     return { status: 'healthy', timestamp: new Date().toISOString() };
   });
 
-  // Serve the main app for any non-API routes
-  app.get('/*', async (request, reply) => {
-    if (request.url.startsWith('/api/')) {
-      reply.code(404).send({ error: 'API endpoint not found' });
-      return;
-    }
-
-    return reply.sendFile('index.html');
-  });
-
+  // Register API routes first
   await app.register(authRoutes, { prefix: '/api/auth' });
   await app.register(userRoutes, { prefix: '/api/users' });
   await app.register(templateRoutes, { prefix: '/api/templates' });
   await app.register(passRoutes, { prefix: '/api/passes' });
   await app.register(adminRoutes, { prefix: '/api/admin' });
+
+  // Serve the main app for any non-API routes (temporarily commented out)
+  // app.get('/*', async (request, reply) => {
+  //   if (request.url.startsWith('/api/')) {
+  //     reply.code(404).send({ error: 'API endpoint not found' });
+  //     return;
+  //   }
+
+  //   return reply.sendFile('index.html');
+  // });
 
   app.setErrorHandler((error, request, reply) => {
     app.log.error(error);

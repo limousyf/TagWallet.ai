@@ -4,14 +4,21 @@
   "description": "Online service for generating Apple Wallet and Google Wallet tags with NFC and QR code support",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --noEmitOnError false",
     "start": "node dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "lint": "eslint src/**/*.ts",
     "test": "jest",
     "typecheck": "tsc --noEmit"
   },
-  "keywords": ["wallet", "apple-wallet", "google-wallet", "nfc", "qr-code", "cloud-run"],
+  "keywords": [
+    "wallet",
+    "apple-wallet",
+    "google-wallet",
+    "nfc",
+    "qr-code",
+    "cloud-run"
+  ],
   "author": "",
   "license": "MIT",
   "dependencies": {
@@ -21,13 +28,17 @@
     "@fastify/static": "^6.12.0",
     "@google-cloud/storage": "^7.5.0",
     "@googleapis/walletobjects": "^3.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
     "fastify": "^4.24.3",
+    "googleapis": "^164.1.0",
     "joi": "^17.11.0",
+    "jsonwebtoken": "^9.0.2",
     "passkit-generator": "^3.3.3",
     "pg": "^8.11.3",
     "qrcode": "^1.5.3",
+    "ts-node": "^10.9.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

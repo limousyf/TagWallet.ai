@@ -56,7 +56,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      request.log.error('Error in updateProfile:', error);
+      request.log.error(`'Error in updateProfile:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
@@ -86,7 +86,7 @@ export class UserController {
         },
       });
     } catch (error) {
-      request.log.error('Error in getProfile:', error);
+      request.log.error(`'Error in getProfile:' ${error}`);
       reply.status(500).send({ error: 'Internal server error' });
     }
   }
