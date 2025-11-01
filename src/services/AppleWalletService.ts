@@ -19,8 +19,8 @@ export class AppleWalletService {
 
   async generatePass(passData: PassTemplateData, serialNumber: string): Promise<Buffer> {
     try {
-      // Create base pass template
-      const passTemplate = {
+      // According to passkit-generator docs, need to use PKPass.from with a model object
+      const model = {
         formatVersion: 1,
         passTypeIdentifier: config.appleWallet.passTypeId,
         teamIdentifier: config.appleWallet.teamId,
@@ -71,11 +71,11 @@ export class AppleWalletService {
       };
 
       if ((passData as any).relevantDate) {
-        (passTemplate as any).relevantDate = (passData as any).relevantDate;
+        (model as any).relevantDate = (passData as any).relevantDate;
       }
 
       if (passData.locations && passData.locations.length > 0) {
-        (passTemplate as any).locations = passData.locations.map(location => ({
+        (model as any).locations = passData.locations.map(location => ({
           latitude: location.latitude,
           longitude: location.longitude,
           altitude: location.altitude,
@@ -83,12 +83,12 @@ export class AppleWalletService {
         }));
 
         if (passData.maxDistance) {
-          (passTemplate as any).maxDistance = passData.maxDistance;
+          (model as any).maxDistance = passData.maxDistance;
         }
       }
 
       if (passData.barcode) {
-        (passTemplate as any).barcodes = [
+        (model as any).barcodes = [
           {
             format: passData.barcode.format,
             message: passData.barcode.message,
@@ -99,18 +99,21 @@ export class AppleWalletService {
       }
 
       if (passData.nfc) {
-        (passTemplate as any).nfc = {
+        (model as any).nfc = {
           message: passData.nfc.message,
           encryptionPublicKey: passData.nfc.encryptionPublicKey,
         };
       }
 
-      const pass = new PKPass(passTemplate as any, {
-        wwdr: await this.getCertificate('wwdr.pem'),
-        signerCert: await this.getCertificate('signerCert.pem'),
-        signerKey: await this.getCertificate('signerKey.key'),
-        signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
-      });
+      const pass = await PKPass.from(
+        { model } as any,
+        {
+          wwdr: await this.getCertificate('wwdr.pem'),
+          signerCert: await this.getCertificate('signerCert.pem'),
+          signerKey: await this.getCertificate('signerKey.key'),
+          signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
+        } as any
+      );
       return pass.getAsBuffer();
     } catch (error) {
       console.error('Error generating Apple Wallet pass:', error);
