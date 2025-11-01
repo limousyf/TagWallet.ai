@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Tags - Digital Wallet Pass Generator</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+</head>
+<body>
+    <div id="app">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="/images/logo.svg" alt="Wallet Tags" class="logo">
+                    <span class="brand-text">Wallet Tags</span>
+                </div>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="#home" class="nav-link">Home</a>
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#docs" class="nav-link">Documentation</a>
+                    <div class="nav-auth" id="nav-auth">
+                        <button class="btn btn-secondary" onclick="showLogin()">Sign In</button>
+                        <button class="btn btn-primary" onclick="showRegister()">Get Started</button>
+                    </div>
+                    <div class="nav-user hidden" id="nav-user">
+                        <button class="btn btn-secondary" onclick="showDashboard()">Dashboard</button>
+                        <button class="btn btn-ghost" onclick="logout()">Sign Out</button>
+                    </div>
+                </div>
+                <button class="nav-toggle" id="nav-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Landing Page -->
+            <section id="landing" class="landing-section">
+                <div class="hero">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Generate Digital Wallet Passes</h1>
+                        <p class="hero-subtitle">Create Apple Wallet and Google Wallet passes with NFC and QR code support. Perfect for events, loyalty cards, tickets, and more.</p>
+                        <div class="hero-actions">
+                            <button class="btn btn-primary btn-large" onclick="showRegister()">Start Creating</button>
+                            <button class="btn btn-secondary btn-large" onclick="showDemo()">View Demo</button>
+                        </div>
+                    </div>
+                    <div class="hero-visual">
+                        <div class="phone-mockup">
+                            <div class="wallet-pass apple-pass">
+                                <div class="pass-header">
+                                    <span class="pass-logo">🎫</span>
+                                    <span class="pass-title">Event Pass</span>
+                                </div>
+                                <div class="pass-content">
+                                    <div class="pass-field">
+                                        <span class="field-label">Event</span>
+                                        <span class="field-value">Tech Conference 2024</span>
+                                    </div>
+                                    <div class="pass-qr">
+                                        <div class="qr-code"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📱</div>
+                        <h3>Apple Wallet</h3>
+                        <p>Generate .pkpass files compatible with Apple Wallet on iOS devices</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>Google Wallet</h3>
+                        <p>Create passes for Google Wallet on Android and web platforms</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📶</div>
+                        <h3>NFC Support</h3>
+                        <p>Enable near-field communication for contactless interactions</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔲</div>
+                        <h3>QR Codes</h3>
+                        <p>Automatic QR code generation for easy pass distribution</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dashboard -->
+            <section id="dashboard" class="dashboard-section hidden">
+                <div class="dashboard-header">
+                    <h1>Dashboard</h1>
+                    <div class="dashboard-actions">
+                        <button class="btn btn-primary" onclick="showCreatePass()">Create Pass</button>
+                        <button class="btn btn-secondary" onclick="showTemplates()">Templates</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-passes">0</div>
+                        <div class="stat-label">Total Passes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="apple-passes">0</div>
+                        <div class="stat-label">Apple Wallet</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="google-passes">0</div>
+                        <div class="stat-label">Google Wallet</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="today-passes">0</div>
+                        <div class="stat-label">Today</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-content">
+                    <div class="content-tabs">
+                        <button class="tab-button active" onclick="showPassesTab()">Recent Passes</button>
+                        <button class="tab-button" onclick="showTemplatesTab()">Templates</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <div id="passes-tab" class="tab-pane active">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Serial Number</th>
+                                            <th>Type</th>
+                                            <th>Wallet</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="passes-table-body">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div id="templates-tab" class="tab-pane">
+                            <div class="templates-grid" id="templates-grid">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Admin Panel -->
+            <section id="admin" class="admin-section hidden">
+                <div class="admin-header">
+                    <h1>Admin Panel</h1>
+                    <div class="admin-actions">
+                        <button class="btn btn-secondary" onclick="refreshAdminData()">Refresh</button>
+                    </div>
+                </div>
+
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="admin-total-users">0</div>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="admin-total-passes">0</div>
+                        <div class="stat-label">Total Passes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="admin-total-templates">0</div>
+                        <div class="stat-label">Templates</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="admin-today-passes">0</div>
+                        <div class="stat-label">Today's Passes</div>
+                    </div>
+                </div>
+
+                <div class="admin-content">
+                    <div class="content-tabs">
+                        <button class="tab-button active" onclick="showUsersAdminTab()">Users</button>
+                        <button class="tab-button" onclick="showPassesAdminTab()">Passes</button>
+                        <button class="tab-button" onclick="showTemplatesAdminTab()">Templates</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <div id="users-admin-tab" class="tab-pane active">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Email</th>
+                                            <th>Name</th>
+                                            <th>Admin</th>
+                                            <th>Joined</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-admin-table-body">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modals -->
+        <div id="modal-overlay" class="modal-overlay hidden">
+            <!-- Login Modal -->
+            <div id="login-modal" class="modal">
+                <div class="modal-header">
+                    <h2>Sign In</h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="login-form" class="modal-form">
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Sign In</button>
+                        <button type="button" class="btn btn-ghost" onclick="showRegister()">Create Account</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Register Modal -->
+            <div id="register-modal" class="modal hidden">
+                <div class="modal-header">
+                    <h2>Create Account</h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="register-form" class="modal-form">
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-first-name">First Name</label>
+                        <input type="text" id="register-first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-last-name">Last Name</label>
+                        <input type="text" id="register-last-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" required minlength="8">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                        <button type="button" class="btn btn-ghost" onclick="showLogin()">Sign In Instead</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Create Pass Modal -->
+            <div id="create-pass-modal" class="modal large-modal hidden">
+                <div class="modal-header">
+                    <h2>Create New Pass</h2>
+                    <button class="modal-close" onclick="closeModal()">&times;</button>
+                </div>
+                <form id="create-pass-form" class="modal-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pass-wallet-type">Wallet Type</label>
+                            <select id="pass-wallet-type" required>
+                                <option value="">Select wallet type</option>
+                                <option value="apple">Apple Wallet</option>
+                                <option value="google">Google Wallet</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pass-template">Template (Optional)</label>
+                            <select id="pass-template">
+                                <option value="">Create from scratch</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pass-organization">Organization Name</label>
+                        <input type="text" id="pass-organization" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pass-logo-text">Logo Text</label>
+                        <input type="text" id="pass-logo-text" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pass-description">Description</label>
+                        <textarea id="pass-description" required rows="3"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pass-bg-color">Background Color</label>
+                            <input type="color" id="pass-bg-color" value="#1a1a1a" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="pass-fg-color">Text Color</label>
+                            <input type="color" id="pass-fg-color" value="#ffffff" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Pass</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" class="loading-spinner hidden">
+            <div class="spinner"></div>
+            <p>Creating your pass...</p>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toast-container" class="toast-container"></div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
