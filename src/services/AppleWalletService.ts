@@ -106,7 +106,7 @@ export class AppleWalletService {
       }
 
       const pass = await PKPass.from(
-        { model } as any,
+        model as any,
         {
           wwdr: await this.getCertificate('wwdr.pem'),
           signerCert: await this.getCertificate('signerCert.pem'),
