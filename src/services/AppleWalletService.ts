@@ -19,30 +19,21 @@ export class AppleWalletService {
 
   async generatePass(passData: PassTemplateData, serialNumber: string): Promise<Buffer> {
     try {
-      const passModel = {
-        model: {
-          formatVersion: 1,
-          passTypeIdentifier: config.appleWallet.passTypeId,
-          teamIdentifier: config.appleWallet.teamId,
-          organizationName: passData.organizationName,
-          description: passData.description,
-          logoText: passData.logoText,
-          foregroundColor: passData.foregroundColor,
-          backgroundColor: passData.backgroundColor,
-          labelColor: passData.labelColor || passData.foregroundColor,
-        },
-        certificates: {
-          wwdr: await this.getCertificate('wwdr.pem'),
-          signerCert: await this.getCertificate('signerCert.pem'),
-          signerKey: await this.getCertificate('signerKey.pem'),
-          signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
-        },
-        overrides: {
-          serialNumber: serialNumber,
-          webServiceURL: passData.webServiceURL,
-          authenticationToken: passData.authenticationToken,
-        },
-        structure: {
+      // Create base pass template
+      const passTemplate = {
+        formatVersion: 1,
+        passTypeIdentifier: config.appleWallet.passTypeId,
+        teamIdentifier: config.appleWallet.teamId,
+        organizationName: passData.organizationName,
+        description: passData.description,
+        logoText: passData.logoText,
+        foregroundColor: passData.foregroundColor,
+        backgroundColor: passData.backgroundColor,
+        labelColor: passData.labelColor || passData.foregroundColor,
+        serialNumber: serialNumber,
+        webServiceURL: passData.webServiceURL,
+        authenticationToken: passData.authenticationToken,
+        generic: {
           primaryFields: [
             {
               key: 'title',
@@ -80,11 +71,11 @@ export class AppleWalletService {
       };
 
       if ((passData as any).relevantDate) {
-        (passModel.overrides as any).relevantDate = (passData as any).relevantDate;
+        (passTemplate as any).relevantDate = (passData as any).relevantDate;
       }
 
       if (passData.locations && passData.locations.length > 0) {
-        (passModel.overrides as any).locations = passData.locations.map(location => ({
+        (passTemplate as any).locations = passData.locations.map(location => ({
           latitude: location.latitude,
           longitude: location.longitude,
           altitude: location.altitude,
@@ -92,12 +83,12 @@ export class AppleWalletService {
         }));
 
         if (passData.maxDistance) {
-          (passModel.overrides as any).maxDistance = passData.maxDistance;
+          (passTemplate as any).maxDistance = passData.maxDistance;
         }
       }
 
       if (passData.barcode) {
-        (passModel.overrides as any).barcodes = [
+        (passTemplate as any).barcodes = [
           {
             format: passData.barcode.format,
             message: passData.barcode.message,
@@ -108,13 +99,18 @@ export class AppleWalletService {
       }
 
       if (passData.nfc) {
-        (passModel.overrides as any).nfc = {
+        (passTemplate as any).nfc = {
           message: passData.nfc.message,
           encryptionPublicKey: passData.nfc.encryptionPublicKey,
         };
       }
 
-      const pass = await PKPass.from(passModel as any, {});
+      const pass = new PKPass(passTemplate as any, {
+        wwdr: await this.getCertificate('wwdr.pem'),
+        signerCert: await this.getCertificate('signerCert.pem'),
+        signerKey: await this.getCertificate('signerKey.pem'),
+        signerKeyPassphrase: process.env.APPLE_WALLET_KEY_PASSPHRASE || '',
+      });
       return pass.getAsBuffer();
     } catch (error) {
       console.error('Error generating Apple Wallet pass:', error);
