@@ -58,11 +58,11 @@ export class GeneratedPassModel {
     let whereClause, selectParams, countParams;
 
     if (walletType) {
-      whereClause = 'WHERE user_id = $1 AND wallet_type = $4';
+      whereClause = 'WHERE gp.user_id = $1 AND gp.wallet_type = $4';
       selectParams = [userId, limit, offset, walletType];
       countParams = [userId, walletType];
     } else {
-      whereClause = 'WHERE user_id = $1';
+      whereClause = 'WHERE gp.user_id = $1';
       selectParams = [userId, limit, offset];
       countParams = [userId];
     }
