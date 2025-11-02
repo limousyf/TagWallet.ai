@@ -137,8 +137,9 @@ export class PassController {
         },
       });
     } catch (error) {
-      request.log.error(`'Error in getUserPasses:' ${error}`);
-      reply.status(500).send({ error: 'Internal server error' });
+      console.error('Detailed getUserPasses error:', error);
+      request.log.error(`Error in getUserPasses: ${error.message || error}`);
+      reply.status(500).send({ error: 'Internal server error', details: error.message });
     }
   }
 

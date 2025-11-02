@@ -53,6 +53,8 @@ export class GeneratedPassModel {
     offset: number = 0,
     walletType?: 'apple' | 'google'
   ): Promise<{ passes: GeneratedPass[]; total: number }> {
+    console.log('findByUserId called with:', { userId, limit, offset, walletType });
+
     let whereClause, selectParams, countParams;
 
     if (walletType) {
