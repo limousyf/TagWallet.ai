@@ -31,8 +31,8 @@ export class AppleWalletService {
         backgroundColor: passData.backgroundColor,
         labelColor: passData.labelColor || passData.foregroundColor,
         serialNumber: serialNumber,
-        webServiceURL: passData.webServiceURL,
-        authenticationToken: passData.authenticationToken,
+        webServiceURL: passData.webServiceURL || `${config.app.apiBaseUrl}/api/passes/apple/${serialNumber}`,
+        authenticationToken: passData.authenticationToken || `auth_${serialNumber}`,
         generic: {
           primaryFields: [
             {
@@ -140,10 +140,16 @@ export class AppleWalletService {
 
       console.log('All certificates loaded, creating PKPass...');
 
+      // Create a simple icon buffer (1x1 pixel PNG as placeholder)
+      const iconBuffer = this.createSimpleIcon();
+
       // Create pass using PKPass constructor with inline buffers
       const pass = new PKPass(
         {
           "pass.json": passJsonBuffer,
+          "icon.png": iconBuffer,
+          "icon@2x.png": iconBuffer,
+          "icon@3x.png": iconBuffer,
         },
         {
           wwdr: wwdrBuffer,
@@ -255,5 +261,12 @@ export class AppleWalletService {
       console.error('Error creating pass with QR:', error);
       throw error;
     }
+  }
+
+  private createSimpleIcon(): Buffer {
+    // Create a minimal 1x1 pixel PNG (valid but tiny)
+    // This is the smallest possible valid PNG file
+    const iconBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChAGA1/lCJgAAAABJRU5ErkJggg==';
+    return Buffer.from(iconBase64, 'base64');
   }
 }

@@ -78,7 +78,7 @@ export class GeneratedPassModel {
         selectParams
       ),
       pool.query(
-        `SELECT COUNT(*) FROM generated_passes ${walletType ? 'WHERE user_id = $1 AND wallet_type = $2' : 'WHERE user_id = $1'}`,
+        `SELECT COUNT(*) FROM generated_passes gp ${walletType ? 'WHERE gp.user_id = $1 AND gp.wallet_type = $2' : 'WHERE gp.user_id = $1'}`,
         countParams
       )
     ]);
