@@ -53,8 +53,17 @@ export class GeneratedPassModel {
     offset: number = 0,
     walletType?: 'apple' | 'google'
   ): Promise<{ passes: GeneratedPass[]; total: number }> {
-    const whereClause = walletType ? 'WHERE user_id = $1 AND wallet_type = $4' : 'WHERE user_id = $1';
-    const params = walletType ? [userId, limit, offset, walletType] : [userId, limit, offset];
+    let whereClause, selectParams, countParams;
+
+    if (walletType) {
+      whereClause = 'WHERE user_id = $1 AND wallet_type = $4';
+      selectParams = [userId, limit, offset, walletType];
+      countParams = [userId, walletType];
+    } else {
+      whereClause = 'WHERE user_id = $1';
+      selectParams = [userId, limit, offset];
+      countParams = [userId];
+    }
 
     const [passesResult, countResult] = await Promise.all([
       pool.query(
@@ -64,14 +73,11 @@ export class GeneratedPassModel {
          ${whereClause}
          ORDER BY gp.created_at DESC
          LIMIT $2 OFFSET $3`,
-        params
+        selectParams
       ),
       pool.query(
-        `SELECT COUNT(*) FROM generated_passes ${whereClause.replace(/\$2|\$3|\$4/g, (match) => {
-          if (match === '$2' || match === '$3') return '';
-          return match;
-        })}`,
-        walletType ? [userId, walletType] : [userId]
+        `SELECT COUNT(*) FROM generated_passes ${walletType ? 'WHERE user_id = $1 AND wallet_type = $2' : 'WHERE user_id = $1'}`,
+        countParams
       )
     ]);
 
